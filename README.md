@@ -1,3 +1,7 @@
+## Developed using
+PostgreSQL 14  
+NodeJs 14.17
+
 ## How to run
 1. Clone this repo
 2. Run npm install
