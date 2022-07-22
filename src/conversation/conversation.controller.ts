@@ -7,7 +7,8 @@ import { ConversationService } from './conversation.service';
 export class ConversationController {
   constructor(
     private conversationService: ConversationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private prisma: PrismaService
   ) {}
 
   @Get('list')
@@ -30,5 +31,25 @@ export class ConversationController {
       data.push(tempObject);
     }
     return data;
+  }
+  
+  @Get('message/:conversationId')
+  async getMessagesInConversation(
+    @Param('conversationId', ParseIntPipe) conversationId: number,
+    @Query('userId', ParseIntPipe) userId: number
+  ) {
+    const conversation = await this.prisma.conversation.findFirst({
+      where: {
+        id: conversationId,
+        participants: { array_contains: userId }
+      }
+    });
+    if (!conversation) return [];
+    const participants = conversation.participants as number[];
+    const partner = participants.filter(p => p != userId);
+    
+    await this.messageService.readMessage(conversationId, partner);
+
+    return await this.messageService.getAllMessageInConversation(conversationId);
   }
 }

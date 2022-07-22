@@ -20,6 +20,13 @@ export class MessageService {
     });
   }
 
+  async getAllMessageInConversation (conversationId: number) {
+    return await this.prisma.message.findMany({
+      where: { conversation_id: conversationId },
+      orderBy: { sent_at: 'desc' }
+    });
+  }
+
   async getLastMessageInConversation (conversationId: number) {
     const lastMessageObject = await this.prisma.message.findFirst({
       where: { conversation_id: conversationId },
@@ -34,6 +41,16 @@ export class MessageService {
         conversation_id: conversationId,
         sender_id: userId,
         read: false
+      }
+    });
+  }
+
+  async readMessage(conversationId: number, senderId: number[]) {
+    return await this.prisma.message.updateMany({
+      data: { read: true },
+      where: {
+        conversation_id: conversationId,
+        sender_id: { in: senderId }
       }
     });
   }
