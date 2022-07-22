@@ -1,5 +1,5 @@
 CREATE TABLE msg_user (
-	id int4 NOT NULL DEFAULT nextval('user_id_seq'::regclass),
+	id serial4 NOT NULL,
 	full_name varchar NOT NULL,
 	email varchar NOT NULL,
 	"password" varchar NOT NULL,
