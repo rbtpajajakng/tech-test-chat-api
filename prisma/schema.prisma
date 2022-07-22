@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Conversation {
+  id           Int       @id(map: "conversation_pk") @default(autoincrement())
+  participants Json
+  Message      Message[]
+
+  @@map("msg_conversation")
+}
+
+model Message {
+  id              Int          @id(map: "msg_messages_pk") @default(autoincrement())
+  conversation_id Int
+  sender_id       User         @relation(fields: [userId], references: [id])
+  content         String       @db.VarChar
+  read            Boolean      @default(false)
+  Conversation    Conversation @relation(fields: [conversation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "msg_conversation_fk")
+  userId          Int
+
+  @@map("msg_messages")
+}
+
+model User {
+  id        Int       @id(map: "user_pk") @default(autoincrement())
+  full_name String    @db.VarChar
+  email     String    @db.VarChar
+  password  String    @db.VarChar
+  Message   Message[]
+
+  @@map("msg_user")
+}

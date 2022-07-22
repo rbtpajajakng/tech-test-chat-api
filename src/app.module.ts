@@ -1,0 +1,10 @@
+import { Module } from '@nestjs/common';
+import { MessageModule } from './message/message.module';
+import { ConversationModule } from './conversation/conversation.module';
+
+@Module({
+  imports: [MessageModule, ConversationModule],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}
