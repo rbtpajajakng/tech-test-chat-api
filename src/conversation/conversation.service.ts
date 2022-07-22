@@ -24,4 +24,27 @@ export class ConversationService {
     }
     return checkConversation;
   }
+
+  async listAllUserConversation(user: number) {
+    return await this.prisma.conversation.findMany({
+      where: {
+        participants: {
+          array_contains: user
+        }
+      }
+    });
+  }
+
+  async getPartnerName(user: number, participants: number[]) {
+    const messageTo = await this.prisma.user.findFirst({
+      where: {
+        id: {
+          in: participants,
+          not: user
+        }
+      },
+      select: { full_name: true }
+    });
+    return messageTo.full_name;
+  }
 }

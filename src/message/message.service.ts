@@ -19,4 +19,22 @@ export class MessageService {
       }
     });
   }
+
+  async getLastMessageInConversation (conversationId: number) {
+    const lastMessageObject = await this.prisma.message.findFirst({
+      where: { conversation_id: conversationId },
+      orderBy: { sent_at: 'desc' }
+    });
+    return lastMessageObject.content;
+  }
+
+  async countUnreadMessage (conversationId: number, userId: number) {
+    return await this.prisma.message.count({
+      where: {
+        conversation_id: conversationId,
+        sender_id: userId,
+        read: false
+      }
+    });
+  }
 }
