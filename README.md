@@ -18,5 +18,9 @@ Body:
 }
 ```
 ### List all conversations user have
-Endpoint `GET api/conversation/list`  
-Query `userId=number`
+Endpoint: `GET api/conversation/list`  
+Query: `userId=number`
+
+### Get all messages inside a conversation
+Endpoint: `GET api/conversation/message`  
+Query: `userId=number&conversationId=number`

@@ -33,9 +33,9 @@ export class ConversationController {
     return data;
   }
   
-  @Get('message/:conversationId')
+  @Get('message')
   async getMessagesInConversation(
-    @Param('conversationId', ParseIntPipe) conversationId: number,
+    @Query('conversationId', ParseIntPipe) conversationId: number,
     @Query('userId', ParseIntPipe) userId: number
   ) {
     const conversation = await this.prisma.conversation.findFirst({
