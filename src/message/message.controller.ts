@@ -1,34 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException } from '@nestjs/common';
 import { MessageService } from './message.service';
-import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
+import { SendMessageDto } from './dto/send-message.dto';
+import { ConversationService } from 'src/conversation/conversation.service';
+import { UserService } from 'src/user/user.service';
 
 @Controller('message')
 export class MessageController {
-  constructor(private readonly messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private conversationService: ConversationService,
+    private userService: UserService
+  ) {}
 
-  @Post()
-  create(@Body() createMessageDto: CreateMessageDto) {
-    return this.messageService.create(createMessageDto);
-  }
+  @Post('send')
+  async sendMessage(@Body() sendMessageDto: SendMessageDto) {
+    const sender = +sendMessageDto.senderId;
+    const receiver = +sendMessageDto.receiverId;
 
-  @Get()
-  findAll() {
-    return this.messageService.findAll();
-  }
+    const isReceiverExists = await this.userService.checkUserExistence(receiver);
+    if(!isReceiverExists) throw new HttpException("You are trying to send a message to non-existent user", 500);
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.messageService.findOne(+id);
-  }
+    const content = sendMessageDto.content;
+    if(!content) return;
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMessageDto: UpdateMessageDto) {
-    return this.messageService.update(+id, updateMessageDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.messageService.remove(+id);
+    const conversation = await this.conversationService.getConversation(sender, receiver);
+    return this.messageService.create(conversation.id, sender, content);
   }
 }

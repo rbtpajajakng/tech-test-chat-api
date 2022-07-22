@@ -18,11 +18,12 @@ model Conversation {
 model Message {
   id              Int          @id(map: "msg_messages_pk") @default(autoincrement())
   conversation_id Int
-  sender_id       User         @relation(fields: [userId], references: [id])
+  sender_id       Int         
   content         String       @db.VarChar
   read            Boolean      @default(false)
+  sent_at         DateTime     @default(now())
   Conversation    Conversation @relation(fields: [conversation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "msg_conversation_fk")
-  userId          Int
+  User            User         @relation(fields: [sender_id], references: [id])
 
   @@map("msg_messages")
 }

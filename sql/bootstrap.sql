@@ -18,7 +18,15 @@ CREATE TABLE msg_messages (
 	"content" varchar NOT NULL,
 	"read" bool NOT NULL DEFAULT false,
 	sender_id int4 NOT NULL,
+	sent_at timetz NOT NULL DEFAULT now(),
 	CONSTRAINT msg_messages_pk PRIMARY KEY (id),
 	CONSTRAINT msg_conversation_fk FOREIGN KEY (conversation_id) REFERENCES public.msg_conversation(id),
 	CONSTRAINT msg_sender_fk FOREIGN KEY (sender_id) REFERENCES public.msg_user(id)
 );
+
+-- Seed for user
+INSERT INTO msg_user (full_name, email, "password")
+VALUES
+	('Robertus Pajajakng','robertus.pajajakng@gmail.com','letspretendyoucannotseethis'),
+	('Rakamin','email@rakamin.com','letspretendyoucannotseethis');
+
